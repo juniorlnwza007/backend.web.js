@@ -1,4 +1,3 @@
-// registerService.js
 const axios = require('axios')
 const afbApiUri = "https://ggapi-uat.5k2an3or4q209.xyz/ggapi"
 

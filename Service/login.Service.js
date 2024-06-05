@@ -1,4 +1,3 @@
-// registerService.js
 const axios = require('axios');
 const genFormLogin = require('../components/genFormLogin');
 const afbApiUri = "https://ggapi-uat.5k2an3or4q209.xyz/ggapi";
@@ -22,8 +21,14 @@ const loginService = async (token, datapost = {}) => {
         data: data,
     };
 
-    let datares = await axios.request(config);
-    return datares.data;
+    try {
+        let datares = await axios.request(config);
+        console.log('External API response:', datares.data);
+        return datares.data;
+    } catch (error) {
+        console.error('Error in external API request:', error.message);
+        throw error;
+    }
 };
 
 module.exports = loginService;
