@@ -4,16 +4,18 @@ const getTokenService = require('./Service/getToken.Service');
 const RegisterService = require('./Service/register.Service');
 const loginService = require('./Service/login.Service');
 const gamelistService = require('./Service/gamelist.Service');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 8088;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'build')));
 
-app.get('/', (req, res) => {
-    res.send('Hello World');
-});
+app.get('/', function (req, res) {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+  });
 
 app.get('/token', async (req, res) => {
     try {
@@ -40,6 +42,39 @@ app.post('/gamelist', async (req, res) => {
         res.status(500).send({ error: 'An error gamelist' });
     }
 });
+
+app.post('/PG', async (req, res) => {
+    try {
+        let getToken = await getTokenService();
+        let gamelist = await gamelistService(getToken.Authorization, {
+            brandcode: 'GAPI',
+            domainname: 'www.ggapisuite.com',
+            providercode: 'PGSOFT',
+            currencycode: 'THB'
+        });
+        res.send({ ...gamelist }); 
+    } catch (error) {
+        console.error('gamelist failed:', error);
+        res.status(500).send({ error: 'An error gamelist' });
+    }
+});
+
+app.get('/REDTIGER', async (req, res) => {
+    try {
+        let getToken = await getTokenService();
+        let gamelist = await gamelistService(getToken.Authorization, {
+            brandcode: 'GAPI',
+            domainname: 'www.ggapisuite.com',
+            providercode: 'REDTIGER',
+            currencycode: 'THB'
+        });
+        res.send({ ...gamelist }); 
+    } catch (error) {
+        console.error('gamelist failed:', error);
+        res.status(500).send({ error: 'An error occurred while fetching the game list' });
+    }
+});
+
 
 app.post('/register', async (req, res) => {
     const {
